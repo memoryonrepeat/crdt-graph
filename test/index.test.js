@@ -1,25 +1,25 @@
 const LWWSet = require('../class/LWWSet')
 
 describe('LWWSet', () => {
-  describe('constructor', () => {
-    test('should be able to construct a LWWSet instance', () => {
-      const instance = new LWWSet()
-      expect(instance).toBeInstanceOf(LWWSet)
-    })
+
+  let lwwSet
+
+  beforeEach(() => {
+    lwwSet = new LWWSet()
   })
 
-  describe('add element', () => {
+  afterEach(() => {
+    lwwSet = null
+  })
+
+  describe('basic add and remove', () => {
     test('should be able to add an entirely new element', () => {
-      const lwwSet = new LWWSet()
-      
       lwwSet.add('a')
       
       expect(lwwSet.lookup('a')).toBe(true)
     })
 
     test('should be able to update an existing element with newer timestamp', () => {
-      const lwwSet = new LWWSet()
-      
       lwwSet.add('a', 1)
       
       expect(lwwSet.lookup('a')).toBe(true)
@@ -29,6 +29,16 @@ describe('LWWSet', () => {
 
       expect(lwwSet.lookup('a')).toBe(true)
       expect(lwwSet.addSet.get('a')).toBe(2)
+    })
+
+    test('should be able to remove an existing element', () => {
+      lwwSet.add('a', 1)
+      
+      expect(lwwSet.lookup('a')).toBe(true)
+
+      lwwSet.remove('a', 2)
+
+      expect(lwwSet.lookup('a')).toBe(false)
     })
   })
 })
