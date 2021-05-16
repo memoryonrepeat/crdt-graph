@@ -1,0 +1,22 @@
+{
+  "name": "crdt-graph",
+  "version": "1.0.0",
+  "description": "State-based LWW-Element-Graph CRDT built on top of LWW-Element-Set with test cases.",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/memoryonrepeat/crdt-graph.git"
+  },
+  "author": "Thanh Nguyen",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/memoryonrepeat/crdt-graph/issues"
+  },
+  "homepage": "https://github.com/memoryonrepeat/crdt-graph#readme",
+  "devDependencies": {
+    "jest": "^26.6.3"
+  }
+}
