@@ -121,7 +121,8 @@ describe('LWWSet', () => {
       otherSet.add('c', 4)
       otherSet.remove('d', 3)
       otherSet.remove('b',6)
-      lwwSet.remove('e',8)
+      otherSet.add('e', 6)
+      otherSet.remove('e',8)
 
       const mergedSet = lwwSet.merge(otherSet)
 
