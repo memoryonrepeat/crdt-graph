@@ -47,17 +47,18 @@ class LWWGraph {
   }
 
   removeEdge(start, end, timestamp = Date.now()){
-    if (this.lookupVertex(start) === false || this.lookupVertex(end) === false){
-      return
-    }
-
     // Edge might have been added in reverse order --> need to consider both cases
     this.edgeSet.remove([start, end], timestamp)
     this.edgeSet.remove([end, start], timestamp)
 
     // Update adjacency list on both ends
-    this.graph.get(start).delete(end)
-    this.graph.get(end).delete(start)
+    if (this.graph.has(start)){
+      this.graph.get(start).delete(end)
+    }
+
+    if (this.graph.has(end)){
+      this.graph.get(end).delete(start)
+    }
   }
 
   removeVertex(vertex, timestamp = Date.now()){
@@ -99,6 +100,7 @@ class LWWGraph {
   }
 
   // Represent graph as adjacency list for use later
+  // Upon merging, this will also resolve potential conflicts
   constructGraph(){
     this.graph = new Map()
     
@@ -107,6 +109,11 @@ class LWWGraph {
     }
 
     for (const [start,end] of this.edgeSet.entries()){
+      // Remove vertex takes priority over adding edge, as decided in paper
+      if (this.lookupVertex(start) === false || this.lookupVertex(end) === false){
+        this.removeEdge(start, end)
+      }
+
       this.graph.get(start).add(end)
       this.graph.get(end).add(start)
     }    

@@ -53,7 +53,7 @@ class LWWSet {
     const entries = new Set()
 
     for (const key in Array.from(this.addSet.keys())){
-      if (this.lookup(key)){
+      if (this.lookup(key) === true){
         entries.add(key)
       }
     }
