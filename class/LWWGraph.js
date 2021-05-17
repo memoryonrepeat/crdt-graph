@@ -71,6 +71,14 @@ class LWWGraph {
 
     this.vertexSet.remove(vertex, timestamp)
   }
+
+  findPath(start, end){
+    // TODO Implement
+  }
+
+  merge(otherGraph){
+    // TODO Implement
+  }
 }
 
 module.exports = LWWGraph
