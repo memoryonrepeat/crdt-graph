@@ -5,7 +5,8 @@ class LWWGraph {
   constructor(vertexSet = new LWWSet(), edgeSet = new LWWSet()){
     this.vertexSet = vertexSet
     this.edgeSet = edgeSet
-    this.graph = new Map() // Model graph as adjacency list to optimize querying about neighbors
+    // Model graph as adjacency list to optimize querying about neighbors
+    this.constructGraph()
   }
 
   lookupVertex(vertex){
@@ -64,7 +65,7 @@ class LWWGraph {
       return
     }
 
-    for (const neighbor in this.getNeighboringVertices(vertex)){
+    for (const neighbor of this.getNeighboringVertices(vertex)){
       // removeEdge will take care of updating on both ends --> only need to call once
       this.removeEdge(vertex, neighbor, timestamp)
     }
@@ -72,12 +73,50 @@ class LWWGraph {
     this.vertexSet.remove(vertex, timestamp)
   }
 
-  findPath(start, end){
-    // TODO Implement
+  findPath(start, end, path = []){
+    path.push(start)
+
+    if (start === end){
+      return path
+    }
+
+    // dead end --> return empty path
+    if (this.graph.get(start).size === 0){
+      return []
+    }
+
+    for (const neighbor of this.graph.get(start)){
+      if (path.includes(neighbor) === false){ // not visited --> search deeper
+        const pathFromHere = this.findPath(neighbor, end, path)
+        
+        if (pathFromHere.length > 0){
+          return pathFromHere
+        }
+      }
+    }
+
+    return []
+  }
+
+  // Represent graph as adjacency list for use later
+  constructGraph(){
+    this.graph = new Map()
+    
+    for (const vertex of this.vertexSet.entries()){
+      this.graph.set(vertex, new Set())
+    }
+
+    for (const [start,end] of this.edgeSet.entries()){
+      this.graph.get(start).add(end)
+      this.graph.get(end).add(start)
+    }    
   }
 
   merge(otherGraph){
-    // TODO Implement
+    const mergedVertexSet = this.vertexSet.merge(otherGraph.vertexSet)
+    const mergedEdgeSet = this.edgeSet.merge(otherGraph.edgeSet)
+
+    return new LWWGraph(mergedVertexSet, mergedEdgeSet)
   }
 }
 

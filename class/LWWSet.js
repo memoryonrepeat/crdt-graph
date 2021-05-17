@@ -48,6 +48,19 @@ class LWWSet {
     return true
   }
 
+  // Util method to return all existing elements
+  entries(){
+    const entries = new Set()
+
+    for (const key in Array.from(this.addSet.keys())){
+      if (this.lookup(key)){
+        entries.add(key)
+      }
+    }
+
+    return entries
+  }
+
   merge(otherSet){
     let mergedSet = new LWWSet()
     
