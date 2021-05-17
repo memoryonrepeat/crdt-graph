@@ -114,7 +114,7 @@ describe('LWWSet', () => {
       lwwSet.remove('b', 5)
       lwwSet.add('e',7)
 
-      let otherSet = new LWWSet()
+      const otherSet = new LWWSet()
 
       otherSet.remove('a', 5)
       otherSet.add('b', 1)
