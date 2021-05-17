@@ -65,6 +65,7 @@ class LWWGraph {
     }
 
     for (const neighbor in this.getNeighboringVertices(vertex)){
+      // removeEdge will take care of updating on both ends --> only need to call once
       this.removeEdge(vertex, neighbor, timestamp)
     }
 
