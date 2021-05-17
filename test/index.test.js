@@ -50,10 +50,18 @@ describe('LWWSet', () => {
     })
 
     test('should be able to remove an element multiple times and keep the latest timestamp', () => {
+      lwwSet.add('a', 1)
+
+      expect(lwwSet.lookup('a')).toBe(true)
+
+      lwwSet.remove('a', 0)
+
+      expect(lwwSet.lookup('a')).toBe(true) // still exists since remove happened earlier
+
       lwwSet.remove('a', 1)
       
       expect(lwwSet.lookup('a')).toBe(false)
-      expect(lwwSet.addSet.get('a')).toBe(undefined)
+      expect(lwwSet.addSet.get('a')).toBe(1)
       expect(lwwSet.removeSet.get('a')).toBe(1)
     })
 

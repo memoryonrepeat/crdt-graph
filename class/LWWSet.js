@@ -4,11 +4,7 @@ class LWWSet {
     this.removeSet = removeSet
   }
 
-  _update(element, timestamp = Date.now(), targetSet){
-    if (!targetSet){
-      throw new Error('Target set must be provided.')
-    }
-
+  _update(element, timestamp = Date.now(), targetSet = this.addSet){
     if (targetSet.has(element) === false){
       targetSet.set(element, timestamp)
   
@@ -39,7 +35,8 @@ class LWWSet {
       return true
     }
 
-    if (this.addSet.get(element) < this.removeSet.get(element)){
+    // In case of equal timestamp, give priority to remove operation
+    if (this.addSet.get(element) <= this.removeSet.get(element)){
       return false
     }
 
