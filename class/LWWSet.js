@@ -1,3 +1,4 @@
+// Last-write-win CRDT for set, based on the official paper
 class LWWSet {
   constructor(addSet = new Map(), removeSet = new Map()){
     this.addSet = addSet
