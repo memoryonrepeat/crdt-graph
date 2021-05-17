@@ -29,12 +29,12 @@ describe('LWWSet', () => {
       expect(lwwSet.lookup('a')).toBe(false)
     })
 
-    test('should be able to remove a non-existing element', () => {
+    test('should not be able to remove a non-existing element', () => {
       lwwSet.remove('a', 1)
       
       expect(lwwSet.lookup('a')).toBe(false)
       expect(lwwSet.addSet.get('a')).toBe(undefined)
-      expect(lwwSet.removeSet.get('a')).toBe(1)
+      expect(lwwSet.removeSet.get('a')).toBe(undefined)
     })
 
     test('should be able to add an element multiple times and keep the latest timestamp', () => {
@@ -112,6 +112,7 @@ describe('LWWSet', () => {
       lwwSet.add('c', 3)
       lwwSet.add('d', 4)
       lwwSet.remove('b', 5)
+      lwwSet.add('e',7)
 
       otherSet = new LWWSet()
 
@@ -120,18 +121,22 @@ describe('LWWSet', () => {
       otherSet.add('c', 4)
       otherSet.remove('d', 3)
       otherSet.remove('b',6)
+      lwwSet.remove('e',8)
 
       const mergedSet = lwwSet.merge(otherSet)
 
-      expect(mergedSet.lookup('a')).toBe(false)
+      // remove 'a' was never executed in other set since a was not added first (precondition)
+      expect(mergedSet.lookup('a')).toBe(true)
       expect(mergedSet.lookup('b')).toBe(false)
       expect(mergedSet.lookup('c')).toBe(true)
       expect(mergedSet.lookup('d')).toBe(true)
+      expect(mergedSet.lookup('e')).toBe(false)
 
-      expect(mergedSet.removeSet.get('a')).toBe(5)
+      expect(mergedSet.addSet.get('a')).toBe(1)
       expect(mergedSet.removeSet.get('b')).toBe(6)
       expect(mergedSet.addSet.get('c')).toBe(4)
       expect(mergedSet.addSet.get('d')).toBe(4)
+      expect(mergedSet.removeSet.get('e')).toBe(8)
     })
   })
 })

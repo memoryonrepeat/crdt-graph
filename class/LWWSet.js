@@ -23,6 +23,10 @@ class LWWSet {
   }
 
   remove(element, timestamp = Date.now()){
+    if (this.lookup(element) === false){
+      return
+    }
+    
     this._update(element, timestamp, this.removeSet)
   }
 
