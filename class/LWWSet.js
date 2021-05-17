@@ -42,6 +42,39 @@ class LWWSet {
 
     return true
   }
+
+  merge(otherSet){
+    let mergedSet = new LWWSet()
+    
+    mergedSet.addSet = new Map([...this.addSet])
+    mergedSet.removeSet = new Map([...this.removeSet])
+
+    otherSet.addSet.forEach((value, key) => {
+      if (mergedSet.addSet.has(key) === false){
+        mergedSet.addSet.set(key, value)
+        
+        return
+      }
+
+      if (mergedSet.addSet.get(key) < value){
+        mergedSet.addSet.set(key, value)
+      }
+    })
+
+    otherSet.removeSet.forEach((value, key) => {
+      if (mergedSet.removeSet.has(key) === false){
+        mergedSet.removeSet.set(key, value)
+        
+        return
+      }
+
+      if (mergedSet.removeSet.get(key) < value){
+        mergedSet.removeSet.set(key, value)
+      }
+    })
+
+    return mergedSet
+  }
 }
 
 module.exports = LWWSet
