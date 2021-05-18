@@ -31,6 +31,7 @@ describe('LWWGraph', () => {
       lwwGraph.addVertex('d', 4)
       lwwGraph.removeVertex('a', 5)
       lwwGraph.removeVertex('d', 3)
+      lwwGraph.removeVertex('e', 6)
       
       expect(lwwGraph.lookupVertex('a')).toBe(false)
       expect(lwwGraph.lookupVertex('b')).toBe(true)

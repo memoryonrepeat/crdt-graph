@@ -10,7 +10,7 @@
     "type": "git",
     "url": "git+https://github.com/memoryonrepeat/crdt-graph.git"
   },
-  "author": "Thanh Nguyen",
+  "author": "Thanh Nguyen <tienthanh8490@gmail.com>",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/memoryonrepeat/crdt-graph/issues"

@@ -114,16 +114,13 @@ class LWWGraph {
     }
   }
 
+  // Find any path between two vertices using DFS
   findPath(start, end, path = []){
     path.push(start)
 
+    // Base case --> return current path
     if (start === end){
       return path
-    }
-
-    // dead end --> return empty path
-    if (this.graph.get(start).size === 0){
-      return []
     }
 
     for (const neighbor of this.graph.get(start)){
@@ -136,6 +133,7 @@ class LWWGraph {
       }
     }
 
+    // Revert path status before backtracking
     path.pop(start)
 
     return []

@@ -5,6 +5,7 @@ class LWWSet {
     this.removeSet = removeSet
   }
 
+  // Update utility to add any element to add / remove set
   _update(element, timestamp = Date.now(), targetSet = this.addSet){
     if (targetSet.has(element) === false){
       targetSet.set(element, timestamp)
@@ -48,7 +49,7 @@ class LWWSet {
     return true
   }
 
-  // Util method to return all existing elements
+  // Util method to return all existing elements to use later in adjacency matrix construction
   entries(){
     const entries = new Set()
 
@@ -61,6 +62,7 @@ class LWWSet {
     return entries
   }
 
+  // Merge with another set in LWW manner
   merge(otherSet){
     let mergedSet = new LWWSet()
     
