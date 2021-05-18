@@ -97,14 +97,21 @@ class LWWGraph {
       return
     }
 
-    for (const neighbor of this.getNeighboringVertices(vertex)){
-      // removeEdge will take care of updating on both ends --> only need to call once
-      this.removeEdge(vertex, neighbor, timestamp)
-      this.graph.get(vertex).delete(neighbor)
-    }
-
     this.vertexSet.remove(vertex, timestamp)
-    this.graph.delete(vertex)
+    
+    // vertex might not actually be removed since add happened later
+    // only clean up when removal actually happens
+    if (this.lookupVertex(vertex) === false){
+
+      // first remove all connected edges
+      for (const neighbor of this.getNeighboringVertices(vertex)){
+        // removeEdge will take care of updating on both ends --> only need to call once
+        this.removeEdge(vertex, neighbor, timestamp)
+      }
+
+      // finally remove the node itself on adjacency matrix
+      this.graph.delete(vertex)
+    }
   }
 
   findPath(start, end, path = []){
@@ -128,6 +135,8 @@ class LWWGraph {
         }
       }
     }
+
+    path.pop(start)
 
     return []
   }

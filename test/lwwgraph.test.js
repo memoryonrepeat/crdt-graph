@@ -119,7 +119,7 @@ describe('LWWGraph', () => {
       const otherGraph = new LWWGraph()
 
       otherGraph.addVertex('a', 2)
-      otherGraph.removeVertex('a', 3)
+      otherGraph.removeVertex('a', 3) // will take precedence over addijng edges to a later
       otherGraph.addVertex('f',4)
       otherGraph.addVertex('g',5)
       otherGraph.addVertex('h',6)
@@ -151,6 +151,45 @@ describe('LWWGraph', () => {
         'g': new Set(['h']),
         'h': new Set(['f', 'g'])
       })))
+    })
+
+    test('should be able to find a path between 2 vertices', () => {
+      lwwGraph.addVertex('a',1)
+      lwwGraph.addVertex('b',2)
+      lwwGraph.addVertex('c',3)
+      lwwGraph.addVertex('d',4)
+      lwwGraph.addVertex('e',5)
+
+      lwwGraph.addEdge('a','b',6)
+      lwwGraph.addEdge('a','c',7)
+      lwwGraph.addEdge('c','d',8)
+      lwwGraph.addEdge('d','b',9)
+      lwwGraph.addEdge('d','e',10)
+
+      expect(lwwGraph.graph).toEqual(new Map(Object.entries({
+        'a': new Set(['b', 'c']),
+        'b': new Set(['a', 'd']),
+        'c': new Set(['a','d']),
+        'd': new Set(['b', 'c', 'e']),
+        'e': new Set(['d'])
+      })))
+
+      expect(lwwGraph.findPath('a','e')).toEqual(['a','b','d','e'])
+
+      // Remove b -> d to test if can find an alternative path from a to c
+      lwwGraph.removeEdge('b','d', 11)
+
+      expect(lwwGraph.findPath('a','e')).toEqual(['a','c','d','e'])
+
+      // Disconnect graph --> should return empty path
+      lwwGraph.removeEdge('c','d', 12)
+
+      expect(lwwGraph.findPath('a','e')).toEqual([])
+
+      // Should be able to find direct path
+      lwwGraph.addEdge('a','e',13)
+
+      expect(lwwGraph.findPath('a','e')).toEqual(['a','e'])
     })
   })
 })
