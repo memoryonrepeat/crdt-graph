@@ -144,11 +144,12 @@ class LWWGraph {
       // Remove vertex takes priority over adding edge, as decided in paper
       if (this.lookupVertex(start) === false || this.lookupVertex(end) === false){
         this.removeEdge(start, end)
+        continue
       }
 
       this.graph.get(start).add(end)
       this.graph.get(end).add(start)
-    }    
+    }
   }
 
   merge(otherGraph){
