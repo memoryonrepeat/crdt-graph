@@ -1,4 +1,5 @@
 const LWWSet = require('./LWWSet')
+const EDGE_NOTATION = '->'
 
 // Last-write-win CRDT for undirected graph, based on LWWSet
 class LWWGraph {
@@ -9,6 +10,28 @@ class LWWGraph {
     this.constructGraph()
   }
 
+  /*
+  Due to JavaScript design, non-primitive keys in map are compared using their reference not their values.
+  This means we can't look up using (start,end) tuple after using them as a key, unless we assign them to 
+  a variable and refer to it later, which is cumbersome.
+  There is no support for custom comparator either, so we can't override this behavior.
+  So I decided to stringify the edge notation so that we can simply look them up as a string.
+  As long as there is no vertex using same notation, we are good to go. This solution is also more performant
+  than other workarounds available, which attempts to provide an alternative interface.
+  References:
+  - https://stackoverflow.com/a/32660218/1442280
+  - https://stackoverflow.com/q/21838436/1442280
+  - https://github.com/leafac/collections-deep-equal
+  */ 
+  stringify(start, end){
+    return `${start}${EDGE_NOTATION}${end}`
+  }
+
+  // Util method to parse back the stringified edge
+  parseEdge(edge){
+    return edge.split(EDGE_NOTATION)
+  }
+
   lookupVertex(vertex){
     return this.vertexSet.lookup(vertex)
   }
@@ -16,7 +39,10 @@ class LWWGraph {
   lookupEdge(start, end){
     return this.lookupVertex(start) && 
       this.lookupVertex(end) && 
-      (this.edgeSet.lookup([start, end]) || this.edgeSet.lookup[end, start])
+      (
+        this.edgeSet.lookup(this.stringify(start, end)) || 
+        this.edgeSet.lookup(this.stringify(end, start))
+      )
   }
 
   getNeighboringVertices(vertex){
@@ -33,11 +59,15 @@ class LWWGraph {
   }
 
   addEdge(start, end, timestamp = Date.now()){
-    if (this.lookupVertex(start) === false || this.lookupVertex(end) === false){
+    if (
+      start === end ||
+      this.lookupVertex(start) === false || 
+      this.lookupVertex(end) === false
+    ){
       return
     }
 
-    this.edgeSet.add([start, end], timestamp)
+    this.edgeSet.add(this.stringify(start, end), timestamp)
 
     // Only update adjacency list if new edge is added eventually
     if (this.lookupEdge(start, end) === true){
@@ -48,8 +78,8 @@ class LWWGraph {
 
   removeEdge(start, end, timestamp = Date.now()){
     // Edge might have been added in reverse order --> need to consider both cases
-    this.edgeSet.remove([start, end], timestamp)
-    this.edgeSet.remove([end, start], timestamp)
+    this.edgeSet.remove(this.stringify(start, end), timestamp)
+    this.edgeSet.remove(this.stringify(end, start), timestamp)
 
     // Update adjacency list on both ends
     if (this.graph.has(start)){
@@ -108,7 +138,8 @@ class LWWGraph {
       this.graph.set(vertex, new Set())
     }
 
-    for (const [start,end] of this.edgeSet.entries()){
+    for (const edge of this.edgeSet.entries()){
+      const [start, end] = this.parseEdge(edge)
       // Remove vertex takes priority over adding edge, as decided in paper
       if (this.lookupVertex(start) === false || this.lookupVertex(end) === false){
         this.removeEdge(start, end)
