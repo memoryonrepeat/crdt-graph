@@ -39,7 +39,7 @@ class LWWGraph {
   lookupEdge(start, end){
     return this.lookupVertex(start) && 
       this.lookupVertex(end) && 
-      (
+      ( // Since we are dealing with undirected graph, need to consider both directions
         this.edgeSet.lookup(this.stringify(start, end)) || 
         this.edgeSet.lookup(this.stringify(end, start))
       )
@@ -67,6 +67,7 @@ class LWWGraph {
       return
     }
 
+    // Only need to add once to save space. Look up will consider both directions anyway.
     this.edgeSet.add(this.stringify(start, end), timestamp)
 
     // Only update adjacency list if new edge is added eventually

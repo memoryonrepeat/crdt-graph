@@ -16,6 +16,14 @@ describe('LWWGraph', () => {
       expect(lwwGraph).toBeInstanceOf(LWWGraph)
     })
 
+    test('should correctly stringify edges', () => {
+      expect(lwwGraph.stringify('a','b')).toBe('a->b')
+    })
+
+    test('should correctly parse stringified edges', () => {
+      expect(lwwGraph.parseEdge('a->b')).toStrictEqual(['a','b'])
+    })
+
     test('should be able to correctly add/remove/query vertices', () => {
       lwwGraph.addVertex('a', 1)
       lwwGraph.addVertex('b', 2)
@@ -30,7 +38,7 @@ describe('LWWGraph', () => {
       expect(lwwGraph.lookupVertex('d')).toBe(true) // still true since add happened after remove
     })
 
-    test.only('should be able to correctly add/remove/query edges', () => {
+    test('should be able to correctly add/remove/query edges', () => {
       lwwGraph.addVertex('a', 1)
       lwwGraph.addVertex('b', 2)
       lwwGraph.addVertex('c', 3)
