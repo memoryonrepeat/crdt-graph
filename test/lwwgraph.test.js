@@ -108,22 +108,49 @@ describe('LWWGraph', () => {
       expect(lwwGraph.lookupEdge('d','c')).toBe(true)
       expect(lwwGraph.lookupEdge('d','e')).toBe(true)
 
-      console.log(lwwGraph.graph)
+      expect(lwwGraph.graph).toEqual(new Map(Object.entries({
+        'a': new Set(['b', 'c']),
+        'b': new Set(['a','c']),
+        'c': new Set(['a', 'b', 'd']),
+        'd': new Set(['c', 'e']),
+        'e': new Set(['d'])
+      })))
       
-      otherGraph = new LWWGraph()
+      const otherGraph = new LWWGraph()
 
       otherGraph.addVertex('a', 2)
       otherGraph.removeVertex('a', 3)
+      otherGraph.addVertex('f',4)
+      otherGraph.addVertex('g',5)
+      otherGraph.addVertex('h',6)
+      otherGraph.addEdge('f','g',7)
+      otherGraph.addEdge('h','g',8)
+      otherGraph.addEdge('f','h',9)
+      otherGraph.removeEdge('f','g', 10)
+
+      expect(otherGraph.graph).toEqual(new Map(Object.entries({
+        'f': new Set(['h']),
+        'g': new Set(['h']),
+        'h': new Set(['f', 'g'])
+      })))
 
       const mergedGraph = lwwGraph.merge(otherGraph)
-
-      console.log(mergedGraph.graph)
 
       expect(mergedGraph.lookupEdge('a','b')).toBe(false)
       expect(mergedGraph.lookupEdge('a','c')).toBe(false)
       expect(mergedGraph.lookupEdge('b','c')).toBe(true)
       expect(mergedGraph.lookupEdge('d','c')).toBe(true)
       expect(mergedGraph.lookupEdge('d','e')).toBe(true)
+
+      expect(mergedGraph.graph).toEqual(new Map(Object.entries({
+        'b': new Set(['c']),
+        'c': new Set(['b', 'd']),
+        'd': new Set(['c', 'e']),
+        'e': new Set(['d']),
+        'f': new Set(['h']),
+        'g': new Set(['h']),
+        'h': new Set(['f', 'g'])
+      })))
     })
   })
 })

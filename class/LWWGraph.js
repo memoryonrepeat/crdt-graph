@@ -100,9 +100,11 @@ class LWWGraph {
     for (const neighbor of this.getNeighboringVertices(vertex)){
       // removeEdge will take care of updating on both ends --> only need to call once
       this.removeEdge(vertex, neighbor, timestamp)
+      this.graph.get(vertex).delete(neighbor)
     }
 
     this.vertexSet.remove(vertex, timestamp)
+    this.graph.delete(vertex)
   }
 
   findPath(start, end, path = []){
