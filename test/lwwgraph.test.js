@@ -89,7 +89,7 @@ describe('LWWGraph', () => {
       expect(lwwGraph.lookupEdge('b','d')).toBe(false)
     })
 
-    test.only('should be able to merge two graphs without conflicts', () => {
+    test('should be able to merge two graphs without conflict and construct the correct adjacency matrix', () => {
       lwwGraph.addVertex('a', 1)
       lwwGraph.addVertex('b', 2)
       lwwGraph.addVertex('c', 3)
