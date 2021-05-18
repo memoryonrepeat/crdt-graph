@@ -38,7 +38,7 @@ describe('LWWGraph', () => {
       expect(lwwGraph.lookupVertex('d')).toBe(true) // still true since add happened after remove
     })
 
-    test('should be able to correctly add/remove/query edges', () => {
+    test('should be able to correctly add/remove/query edges and vertices', () => {
       lwwGraph.addVertex('a', 1)
       lwwGraph.addVertex('b', 2)
       lwwGraph.addVertex('c', 3)
@@ -76,6 +76,17 @@ describe('LWWGraph', () => {
       expect(lwwGraph.lookupEdge('c','d')).toBe(true)
       expect(lwwGraph.lookupEdge('d','c')).toBe(true)
       expect(lwwGraph.lookupEdge('b','d')).toBe(true)
+
+      lwwGraph.addEdge('b', 'e', 13)
+
+      expect(lwwGraph.lookupEdge('b','e')).toBe(true)
+
+      lwwGraph.removeVertex('b')
+
+      // Edges that connected to removed vertex must be removed together
+      expect(lwwGraph.lookupVertex('b')).toBe(false)
+      expect(lwwGraph.lookupEdge('b','e')).toBe(false)
+      expect(lwwGraph.lookupEdge('b','d')).toBe(false)
     })
   })
 })
