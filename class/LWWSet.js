@@ -1,5 +1,12 @@
 // Last-write-win CRDT for set, based on the official paper
 class LWWSet {
+
+  // Using map instead of objects because:
+  // - Map allows keys of any type, unlike objects where only strings / symbols is allowed
+  // - It also means Map preserves the type of the key (no conversion)
+  // - Map is more performant on frequent adding / removals which fits the use case
+  // - Map doesn't have any key by default. Object has prototypes which might cause conflicts and reduce performance
+  // - Map preserves insertion order, might be useful later
   constructor(addSet = new Map(), removeSet = new Map()){
     this.addSet = addSet
     this.removeSet = removeSet
